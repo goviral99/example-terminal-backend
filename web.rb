@@ -26,7 +26,7 @@ end
 # STRIPE CONFIG (LIVE MODE)
 # --------------------------------------------------
 Dotenv.load
-Stripe.api_key = ENV['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']   # LIVE KEY
+Stripe.api_key = ENV['STRIPE_SECRET_KEY']
 Stripe.api_version = '2020-03-02'
 
 def log_info(message)
