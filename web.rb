@@ -79,6 +79,33 @@ post '/register_reader' do
   return reader.to_json
 end
 
+# This endpoint creates a simulated S700 reader
+# https://stripe.com/docs/api/terminal/readers/create
+post '/create_reader' do
+  validationError = validateApiKey
+  if !validationError.nil?
+    status 400
+    return log_info(validationError)
+  end
+
+  begin
+    reader = Stripe::Terminal::Reader.create(
+      registration_code: params[:registration_code],
+      label: params[:label] || 'S700 Simulated',
+      device_type: 'simulated_stripe_s700',
+      location: params[:location]
+    )
+  rescue Stripe::StripeError => e
+    status 402
+    return log_info("Error creating reader! #{e.message}")
+  end
+
+  log_info("Reader created: #{reader.id}")
+
+  status 200
+  return reader.to_json
+end
+
 # This endpoint creates a ConnectionToken, which gives the SDK permission
 # to use a reader with your Stripe account.
 # https://stripe.com/docs/terminal/sdk/js#connection-token
